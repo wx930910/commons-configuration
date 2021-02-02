@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test class for {@code NodeTreeWalker}.
@@ -52,11 +53,28 @@ public class TestNodeTreeWalker {
 	 * Tests a traversal in BFS mode.
 	 */
 	@Test
-	public void testWalkBFS() {
+	public void testWalkBFS() throws Exception {
 		final List<String> expected = expectBFS();
-		final TestVisitor visitor = new TestVisitor();
+		final ConfigurationNodeVisitor<ImmutableNode> visitor = Mockito.mock(ConfigurationNodeVisitor.class);
+		List<String> visitorVisitedNodes = new LinkedList<>();
+		int visitorMaxNodeCount = Integer.MAX_VALUE;
+		Mockito.doAnswer((stubInvo) -> {
+			ImmutableNode node = stubInvo.getArgument(0);
+			NodeHandler<ImmutableNode> handler = stubInvo.getArgument(1);
+			visitorVisitedNodes.add(handler.nodeName(node));
+			return null;
+		}).when(visitor).visitBeforeChildren(Mockito.any(), Mockito.any());
+		Mockito.when(visitor.terminate()).thenAnswer((stubInvo) -> {
+			return visitorVisitedNodes.size() >= visitorMaxNodeCount;
+		});
+		Mockito.doAnswer((stubInvo) -> {
+			ImmutableNode node = stubInvo.getArgument(0);
+			NodeHandler<ImmutableNode> handler = stubInvo.getArgument(1);
+			visitorVisitedNodes.add(visitAfterName(handler.nodeName(node)));
+			return null;
+		}).when(visitor).visitAfterChildren(Mockito.any(), Mockito.any());
 		NodeTreeWalker.INSTANCE.walkBFS(NodeStructureHelper.ROOT_AUTHORS_TREE, visitor, createHandler());
-		assertEquals("Wrong visited nodes", expected, visitor.getVisitedNodes());
+		assertEquals("Wrong visited nodes", expected, visitorVisitedNodes);
 	}
 
 	/**
@@ -82,51 +100,5 @@ public class TestNodeTreeWalker {
 		expected.addAll(works);
 		expected.addAll(personae);
 		return expected;
-	}
-
-	/**
-	 * A visitor implementation used for testing purposes. The visitor produces a
-	 * list with the names of the nodes visited in the order it was called. With
-	 * this it can be tested whether the nodes were visited in the correct order.
-	 */
-	private static class TestVisitor implements ConfigurationNodeVisitor<ImmutableNode> {
-		/** A list with the names of the visited nodes. */
-		private final List<String> visitedNodes = new LinkedList<>();
-
-		/** The maximum number of nodes to be visited. */
-		private int maxNodeCount = Integer.MAX_VALUE;
-
-		/**
-		 * Returns the list with the names of the visited nodes.
-		 *
-		 * @return the visit list
-		 */
-		public List<String> getVisitedNodes() {
-			return visitedNodes;
-		}
-
-		/**
-		 * Returns the maximum number of nodes visited by this visitor.
-		 *
-		 * @return the maximum number of nodes
-		 */
-		public int getMaxNodeCount() {
-			return maxNodeCount;
-		}
-
-		@Override
-		public void visitBeforeChildren(final ImmutableNode node, final NodeHandler<ImmutableNode> handler) {
-			visitedNodes.add(handler.nodeName(node));
-		}
-
-		@Override
-		public void visitAfterChildren(final ImmutableNode node, final NodeHandler<ImmutableNode> handler) {
-			visitedNodes.add(visitAfterName(handler.nodeName(node)));
-		}
-
-		@Override
-		public boolean terminate() {
-			return visitedNodes.size() >= getMaxNodeCount();
-		}
 	}
 }
