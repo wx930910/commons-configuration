@@ -16,26 +16,23 @@
  */
 package org.apache.commons.configuration2.reloading;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Random;
 
 /**
- * An implementation of {@code ReloadingDetector} which randomly returns
- * true or false.
+ * An implementation of {@code ReloadingDetector} which randomly returns true or
+ * false.
  *
  */
-public class RandomReloadingDetector implements ReloadingDetector
-{
-    /** The random object.*/
-    private final Random random = new Random();
-
-    @Override
-    public boolean isReloadingRequired()
-    {
-        return random.nextBoolean();
-    }
-
-    @Override
-    public void reloadingPerformed()
-    {
-    }
+public class RandomReloadingDetector {
+	public static ReloadingDetector mockReloadingDetector1() {
+		Random mockFieldVariableRandom = new Random();
+		ReloadingDetector mockInstance = mock(ReloadingDetector.class);
+		when(mockInstance.isReloadingRequired()).thenAnswer((stubInvo) -> {
+			return mockFieldVariableRandom.nextBoolean();
+		});
+		return mockInstance;
+	}
 }
