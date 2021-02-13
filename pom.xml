@@ -487,7 +487,11 @@
       <version>4.2</version>
       <scope>test</scope>
     </dependency>
-
+      <dependency>
+	    <groupId>org.mockito</groupId>
+	    <artifactId>mockito-core</artifactId>
+	    <version>3.4.6</version>
+	  </dependency>
     <!-- javax.mail only contains the API, no impl. -->
     <dependency>
       <groupId>com.sun.mail</groupId>
