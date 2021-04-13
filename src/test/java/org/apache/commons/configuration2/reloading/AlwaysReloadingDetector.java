@@ -16,27 +16,18 @@
  */
 package org.apache.commons.configuration2.reloading;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * A reloading detector implementation which always indicates that a reload is
  * required. This is used by some test classes.
  *
  */
-public class AlwaysReloadingDetector implements ReloadingDetector
-{
-    /**
-     * {@inheritDoc} This implementation always returns <b>true</b>.
-     */
-    @Override
-    public boolean isReloadingRequired()
-    {
-        return true;
-    }
-
-    /**
-     * Empty dummy implementation of this interface method.
-     */
-    @Override
-    public void reloadingPerformed()
-    {
-    }
+public class AlwaysReloadingDetector {
+	public static ReloadingDetector mockReloadingDetector1() {
+		ReloadingDetector mockInstance = mock(ReloadingDetector.class);
+		when(mockInstance.isReloadingRequired()).thenReturn(true);
+		return mockInstance;
+	}
 }
