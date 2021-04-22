@@ -16,7 +16,8 @@
  */
 package org.apache.commons.configuration2;
 
-import java.util.Iterator;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 /**
  * A specialized configuration implementation that does not support cloning.
@@ -25,54 +26,10 @@ import java.util.Iterator;
  * dummies.
  *
  */
-public class NonCloneableConfiguration extends AbstractConfiguration
-{
-    /**
-     * Dummy implementation of this method.
-     */
-    @Override
-    protected void addPropertyDirect(final String key, final Object value)
-    {
-    }
-
-    /**
-     * Dummy implementation of this method.
-     */
-    @Override
-    protected boolean isEmptyInternal()
-    {
-        return true;
-    }
-
-    /**
-     * Dummy implementation of this method.
-     */
-    @Override
-    protected boolean containsKeyInternal(final String key)
-    {
-        return false;
-    }
-
-    /**
-     * Dummy implementation of this method.
-     */
-    @Override
-    protected Iterator<String> getKeysInternal()
-    {
-        return null;
-    }
-
-    /**
-     * Dummy implementation of this method.
-     */
-    @Override
-    protected Object getPropertyInternal(final String key)
-    {
-        return null;
-    }
-
-    @Override
-    protected void clearPropertyDirect(final String key)
-    {
-    }
+public class NonCloneableConfiguration {
+	public static AbstractConfiguration mockAbstractConfiguration1() {
+		AbstractConfiguration mockInstance = spy(AbstractConfiguration.class);
+		doReturn(true).when(mockInstance).isEmptyInternal();
+		return mockInstance;
+	}
 }
